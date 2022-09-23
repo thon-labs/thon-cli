@@ -17,6 +17,23 @@ module.exports = {
   run: async (toolbox: GluegunToolbox) => {
     toolbox.print.highlight(`Thon CLI (v0.0.0)\n`);
 
+    // Get root folder of project
+    let { root } = toolbox.parameters.options as { root: string };
+
+    if (!root) {
+      const response = await toolbox.prompt.ask({
+        type: 'input',
+        name: 'root',
+        message: 'Where you want to create the thon files? (default: "./")',
+      });
+
+      root = response.root.replace('./', '');
+
+      if (root.charAt(root.length - 1) === '/') {
+        root = root.substring(0, root.length - 1);
+      }
+    }
+
     const spinner = toolbox.print.spin('Initializing...');
     await toolbox.system.run('sleep 1');
 
@@ -26,7 +43,10 @@ module.exports = {
     await toolbox.template.generate({
       template: 'core-thonrc.ejs',
       target: `.thonrc`,
-      props: { useTypescript },
+      props: {
+        sourceDir: `${root != '' ? `${root}/` : ''}.thon`,
+        useTypescript,
+      },
     });
 
     // Generates Initial Example Files
