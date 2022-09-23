@@ -5,6 +5,6 @@
  */
 
 import ThonProvider from './core/providers/thon-provider';
-import useThon from '../build/types/core/hooks/use-thon/index';
+import useThon from './core/hooks/use-thon';
 
 export { ThonProvider, useThon };
