@@ -1,26 +1,19 @@
-# thon-cli CLI
+# Thon
 
-A CLI for thon-cli.
+Document your React components easily using markdown.
 
-## Customizing your CLI
+## Motivation
 
-Check out the documentation at https://github.com/infinitered/gluegun/tree/master/docs.
+TBD
 
-## Publishing to NPM
+## Usage
 
-To package your CLI up for NPM, do this:
+TBD
 
-```shell
-$ npm login
-$ npm whoami
-$ npm test
+## Authors
 
-$ npm run build
-
-$ npm publish
-```
+- Gustavo Sales ([@guscsales](https://twitter.com/guscsales))
 
 # License
 
 MIT - see LICENSE
-
