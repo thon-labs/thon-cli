@@ -4,6 +4,7 @@
  * https://github.com/guscsales/thon
  */
 
-import ThonProvider, { ThonContext } from './core/providers/thon-provider';
+import ThonProvider from './core/providers/thon-provider';
+import useThon from '../build/types/core/hooks/use-thon/index';
 
-export { ThonProvider, ThonContext };
+export { ThonProvider, useThon };
