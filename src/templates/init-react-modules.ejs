@@ -1,0 +1,9 @@
+import Button from './components';
+
+export const Primary = () => <Button>My Primary Button</Button>;
+
+export const Secondary = () => (
+  <Button secondary onClick={() => console.log('You can add events!')}>
+    My Secondary Button
+  </Button>
+);
