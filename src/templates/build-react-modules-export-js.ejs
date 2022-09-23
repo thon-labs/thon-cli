@@ -1,0 +1,18 @@
+/**
+ * THON DOCUMENTATIONS
+ * by @guscsales
+ *
+ * ATTENTION:
+ * This module file is generated automatically, do not change it.
+ *
+ * To update it runs on terminal:
+ *   $ thon build
+ */
+<% props.components.forEach(function(component){ %>
+const <%= component.componentName %> = require('./<%= component.relativePath %>');<% }); %>
+
+const modules = {<% props.components.forEach(function(component){ %>
+  <%= component.componentName %>,<% }); %>
+};
+
+module.exports = { modules };

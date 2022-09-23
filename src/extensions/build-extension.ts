@@ -1,22 +1,19 @@
 import { GluegunToolbox } from 'gluegun';
-import * as fs from 'fs';
 import * as glob from 'glob';
 import ConfigurationService from '../services/configuration-service';
-import { exec } from 'child_process';
+import upperFirst from 'lodash/upperFirst';
+import camelCase from 'lodash/camelCase';
+import trim from 'lodash/trim';
+
+const pipe =
+  (...fns) =>
+  (x) =>
+    fns.reduce((y, f) => f(y), x);
 
 module.exports = (toolbox: GluegunToolbox) => {
   toolbox.build = async () => {
     const spinner = toolbox.print.spin('Building...');
     await toolbox.system.run('sleep 1');
-
-    // Installing necessary packages
-    // exec('yarn install marked');
-
-    /*
-      1. Verificar se o source path existe
-      2. Selecionar todos os arquivos com as extensoes dentro do array no source path
-      3. Gerar um arquivo index (ts ou js) que exporta todos esses arquivos
-    */
 
     ConfigurationService.checkSourceExistence(toolbox);
     ConfigurationService.checkExtensionsExistence(toolbox);
@@ -26,11 +23,10 @@ module.exports = (toolbox: GluegunToolbox) => {
 
     const fullSrcDir = ConfigurationService.getFullSourceDir();
 
-    let files = glob.sync(
-      `${fullSrcDir}/**/*.${
-        extensions.length > 1 ? `{${extensions.join(',')}}` : extensions[0]
-      }.{js,ts,jsx,tsx}`,
-    );
+    const globPattern = `${fullSrcDir}/**/*.${
+      extensions.length > 1 ? `+(${extensions.join('|')})` : extensions[0]
+    }.{js,ts,jsx,tsx}`;
+    let files = glob.sync(globPattern);
 
     if (files.length === 0) {
       spinner.warn(
@@ -48,25 +44,36 @@ module.exports = (toolbox: GluegunToolbox) => {
     spinner.start();
     await toolbox.system.run('sleep 1');
 
-    files = files.map((file) => {
+    const components = files.map((file) => {
       const splitPath = file.split(`/${sourceDir}/`);
-      const [relativePath] = splitPath[splitPath.length - 1].split(
-        useTypescript ? '.ts' : '.js',
-      );
+      const folderAndFile = splitPath[splitPath.length - 1];
+      const [relativePath] = folderAndFile.split(useTypescript ? '.ts' : '.js');
+      const relativePathSplit = folderAndFile.split('/');
+      const fileName = relativePathSplit[relativePathSplit.length - 1];
+      let componentName = null;
 
-      if (useTypescript) {
-        return `import './${relativePath}';`;
+      for (let i = 0; i < extensions.length; i++) {
+        const fileNameSplit = fileName.split(`.${extensions[i]}.`);
+
+        if (fileNameSplit.length > 1) {
+          componentName = pipe(camelCase, upperFirst, trim)(fileNameSplit[0]);
+          break;
+        }
       }
 
-      return `require('./${relativePath}');`;
+      return {
+        componentName,
+        relativePath,
+      };
     });
 
-    const requires = files.join('\n');
-
-    fs.writeFileSync(
-      `${fullSrcDir}/index.${useTypescript ? 'ts' : 'js'}`,
-      requires,
-    );
+    await toolbox.template.generate({
+      template: `build-react-modules-export-${useTypescript ? 'ts' : 'js'}.ejs`,
+      target: `${fullSrcDir}/index.${useTypescript ? 'ts' : 'js'}`,
+      props: {
+        components,
+      },
+    });
 
     spinner.succeed('Successfully builded');
   };

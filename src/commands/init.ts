@@ -1,13 +1,3 @@
-/*
-  Configuration File Example //TODO: remove it after create the package
-
-  {
-    sourceDir: './thon',
-    extension: 'thon',
-    useTypescript: false,
-  }
-*/
-
 import ConfigurationService from '../services/configuration-service';
 import { GluegunToolbox } from 'gluegun';
 
@@ -64,6 +54,10 @@ module.exports = {
     });
 
     spinner.succeed('Successfully initialized');
+
+    toolbox.print.warning(
+      `\nYou may need to fix some imports according the disposition of the components`,
+    );
 
     toolbox.print.info(
       `\nYou can create new components. Use the following command:`,
