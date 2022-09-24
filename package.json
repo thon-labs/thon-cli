@@ -1,7 +1,7 @@
 {
   "name": "thon",
   "version": "0.0.1",
-  "description": "thon",
+  "description": "Document your React components easily using markdown.",
   "main": "build/index.js",
   "types": "build/types/index.d.ts",
   "bin": {
@@ -33,6 +33,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "boxen": "5",
     "glob": "^8.0.3",
     "gluegun": "latest",
     "lodash": "^4.17.21"

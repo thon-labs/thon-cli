@@ -73,14 +73,28 @@ function getFullSourceDir(): string {
 function projectUsingTypescript() {
   const basePath = `${process.cwd()}/{,!(node_modules)/**/}`;
 
-  let files = glob.sync(`${basePath}/tsconfig.json`, {
-    ignore: 'node_modules',
-  });
+  let files = glob.sync(`${basePath}/tsconfig.json`);
 
   // For monorepos and other projects that use base configs
   if (files.length == 0) {
     files = glob.sync(`${basePath}/tsconfig.*.json`);
   }
+
+  return files.length > 0;
+}
+
+function projectUsingNext() {
+  const basePath = `${process.cwd()}/{,!(node_modules)/**/}`;
+
+  let files = glob.sync(`${basePath}/next.config.js`);
+
+  return files.length > 0;
+}
+
+function projectUsingYarn() {
+  const basePath = `${process.cwd()}/{,!(node_modules)/**/}`;
+
+  let files = glob.sync(`${basePath}/yarn.lock`);
 
   return files.length > 0;
 }
@@ -91,6 +105,8 @@ const ConfigurationService = {
   checkExtensionsExistence,
   getFullSourceDir,
   projectUsingTypescript,
+  projectUsingNext,
+  projectUsingYarn,
 };
 
 export default ConfigurationService;

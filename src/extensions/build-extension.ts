@@ -30,19 +30,14 @@ module.exports = (toolbox: GluegunToolbox) => {
 
     if (files.length === 0) {
       spinner.warn(
-        'No file has been found. Check the "extensions" on configuration file.',
+        '\n\nNo file has been found. Check the "extensions" on configuration file.',
       );
       process.exit();
     }
 
-    spinner.stop();
-
     toolbox.print.info(
-      `Found ${files.length} file${files.length > 1 ? 's' : ''}\n`,
+      `\n\nFound ${files.length} file${files.length > 1 ? 's' : ''}\n`,
     );
-
-    spinner.start();
-    await toolbox.system.run('sleep 1');
 
     const components = files.map((file) => {
       const splitPath = file.split(`/${sourceDir}/`);
@@ -68,7 +63,7 @@ module.exports = (toolbox: GluegunToolbox) => {
     });
 
     await toolbox.template.generate({
-      template: `build-react-modules-export-${useTypescript ? 'ts' : 'js'}.ejs`,
+      template: `build-react-modules-export.ejs`,
       target: `${fullSrcDir}/index.${useTypescript ? 'ts' : 'js'}`,
       props: {
         components,
