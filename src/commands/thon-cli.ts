@@ -3,9 +3,8 @@ import { GluegunCommand } from 'gluegun';
 const command: GluegunCommand = {
   name: 'thon',
   run: async (toolbox) => {
-    const { print } = toolbox;
-
-    print.info('Welcome to your CLI');
+    toolbox.info();
+    toolbox.print.printHelp(toolbox);
   },
 };
 

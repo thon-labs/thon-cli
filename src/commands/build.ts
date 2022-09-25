@@ -2,9 +2,10 @@ import { GluegunToolbox } from 'gluegun';
 
 module.exports = {
   name: 'build',
+  description: 'Build all markdown files to be prepared to use on application',
   alias: ['b'],
   run: async (toolbox: GluegunToolbox) => {
-    toolbox.print.highlight(`Thon CLI (v0.0.0)\n`);
+    toolbox.info();
 
     await toolbox.build();
 

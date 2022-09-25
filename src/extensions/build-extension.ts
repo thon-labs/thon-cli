@@ -30,14 +30,20 @@ module.exports = (toolbox: GluegunToolbox) => {
 
     if (files.length === 0) {
       spinner.warn(
-        '\n\nNo file has been found. Check the "extensions" on configuration file.',
+        '\nNo file has been found. Check the "extensions" on configuration file.',
       );
       process.exit();
     }
 
+    spinner.clear();
+
     toolbox.print.info(
-      `\n\nFound ${files.length} file${files.length > 1 ? 's' : ''}\n`,
+      `\nFound ${files.length} file${
+        files.length > 1 ? 's' : ''
+      } with allowed extensions: ${extensions.join(', ')}\n`,
     );
+
+    await toolbox.system.run('sleep 1');
 
     const components = files.map((file) => {
       const splitPath = file.split(`/${sourceDir}/`);

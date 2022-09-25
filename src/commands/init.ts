@@ -1,13 +1,13 @@
 import ConfigurationService from '../services/configuration-service';
 import { GluegunToolbox } from 'gluegun';
-import { execSync } from 'child_process';
 import boxen from 'boxen';
 
 module.exports = {
   name: 'init',
+  description: 'Initializes the project to start documenting your components',
   alias: ['i'],
   run: async (toolbox: GluegunToolbox) => {
-    toolbox.print.highlight(`Thon CLI (v0.0.0)\n`);
+    toolbox.info();
 
     // Get root folder of project
     let { root } = toolbox.parameters.options as { root: string };
@@ -29,28 +29,32 @@ module.exports = {
     const spinner = toolbox.print.spin('Initializing...');
     await toolbox.system.run('sleep 1');
 
-    console.log('');
+    spinner.clear();
 
     const useNext = ConfigurationService.projectUsingNext();
 
     if (useNext) {
       toolbox.print.info(
-        `\nFound a nextjs.config.js file. Installing the development packages to run thon correctly.`,
+        `\nFound a nextjs.config.js file. Installing the development packages to run thon correctly.\n`,
       );
-
-      const useYarn = ConfigurationService.projectUsingYarn();
 
       spinner.text = 'Installing...';
       await toolbox.system.run('sleep 1');
 
-      console.log('\n');
-      execSync(useYarn ? 'yarn add -D raw-loader' : 'npm i -D raw-loader');
+      await toolbox.packageManager.add('raw-loader', {
+        dev: true,
+        dryRun: false,
+      });
+
+      spinner.succeed('Installation done');
     }
 
     // Generates RC File
     const useTypescript = ConfigurationService.projectUsingTypescript();
 
     if (useTypescript) {
+      spinner.clear();
+
       toolbox.print.info(
         `\nFound a tsconfig file. Preparing the files to accept Typescript.`,
       );
@@ -82,7 +86,6 @@ module.exports = {
     console.log('');
     spinner.succeed('Successfully initialized');
 
-    console.log('');
     await toolbox.build();
 
     toolbox.print.warning(
@@ -95,7 +98,7 @@ module.exports = {
     // toolbox.print.printCommands(toolbox, ['generate']);
 
     if (useNext) {
-      toolbox.print.info(
+      toolbox.print.warning(
         `\nYou need to update the next config to run thon correctly.`,
       );
 
