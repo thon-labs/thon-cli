@@ -1,6 +1,7 @@
 import ConfigurationService from '../services/configuration-service';
 import { GluegunToolbox } from 'gluegun';
 import boxen from 'boxen';
+import fs from 'fs';
 
 module.exports = {
   name: 'init',
@@ -13,13 +14,22 @@ module.exports = {
     let { root } = toolbox.parameters.options as { root: string };
 
     if (!root) {
+      const sourcePath = process.cwd();
+      const hasSrcFolder = fs.existsSync(`${sourcePath}/src`);
+
       const response = await toolbox.prompt.ask({
         type: 'input',
         name: 'root',
-        message: 'Where you want to create the thon files? (default: "./")',
+        message: `Where you want to create the thon files? (default: "./${
+          hasSrcFolder ? 'src' : ''
+        }")`,
       });
 
-      root = response.root.replace('./', '');
+      if (!response.root) {
+        root = hasSrcFolder ? 'src' : '';
+      } else {
+        root = response.root.replace('./', '');
+      }
 
       if (root.charAt(root.length - 1) === '/') {
         root = root.substring(0, root.length - 1);
