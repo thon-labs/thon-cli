@@ -2,6 +2,10 @@
   "name": "thon",
   "version": "0.0.1",
   "description": "Document your React components easily using markdown.",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/guscsales/thon"
+  },
   "main": "build/index.js",
   "types": "build/types/index.d.ts",
   "bin": {
