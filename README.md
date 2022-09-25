@@ -145,6 +145,12 @@ File: `./thon/button/button.md`:
 </code>
 </pre>
 
+After finish all the creation of your files, run the `build` command:
+
+```
+npx thon build
+```
+
 ## Authors
 
 - Gustavo Sales ([@guscsales](https://twitter.com/guscsales))
