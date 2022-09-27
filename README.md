@@ -2,6 +2,10 @@
 
 Document your React components easily using markdown.
 
+[![npm version](https://badgen.net/npm/v/thon?color=purple)](https://npm.im/thon) [![types included](https://badgen.net/npm/types/tslib?color=purple)](https://npm.im/thon) [![license MIT](https://badgen.net/npm/license/thon?color=purple)](https://github.com/guscsales/thon/blob/main/LICENSE)
+
+---
+
 ## Motivation
 
 Commonly inside a project or company exists an UI library or even some reusable components and those components are only rendered in shallow documentation without too much information. Writing documentation is something that needs to be soft and easy to avoid losing time day by day and everyone that opens the website can understand what is that library about. For this reason, Thon has been created, and it's possible to document your React components using only markdown and some CSS to make things beautiful.
