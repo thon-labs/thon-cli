@@ -6,6 +6,7 @@ export type ConfigurationFile = {
   sourceDir: string;
   extensions: string[];
   useTypescript: boolean;
+  componentsFolders: string[];
 };
 
 const ALLOWED_FILES = ['.thonrc', 'thonrc.json', 'thon.config.js'];
@@ -14,6 +15,7 @@ const defaultConfiguration: ConfigurationFile = {
   sourceDir: './thon',
   extensions: ['thon'],
   useTypescript: false,
+  componentsFolders: [],
 };
 
 function getConfiguration(): ConfigurationFile {
@@ -99,6 +101,14 @@ function projectUsingYarn() {
   return files.length > 0;
 }
 
+function getKeys() {
+  return {
+    appId: process.env.THON_LABS_APP_ID,
+    clientId: process.env.THON_LABS_CLIENT_ID,
+    secretKey: process.env.THON_LABS_SECRET_KEY,
+  };
+}
+
 const ConfigurationService = {
   getConfiguration,
   checkSourceExistence,
@@ -107,6 +117,7 @@ const ConfigurationService = {
   projectUsingTypescript,
   projectUsingNext,
   projectUsingYarn,
+  getKeys,
 };
 
 export default ConfigurationService;
