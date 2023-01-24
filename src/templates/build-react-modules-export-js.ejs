@@ -15,4 +15,8 @@ const modules = {<% props.components.forEach(function(component){ %>
   <%= component.componentName %>,<% }); %>
 };
 
-module.exports = { modules };
+const markdowns = {<% props.components.forEach(function(component){ %>
+  <%= component.componentName %>: '<%= component.markdownPath %>',<% }); %>
+};
+
+module.exports = { modules, markdowns };

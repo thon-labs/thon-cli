@@ -14,3 +14,7 @@ import * as <%= component.componentName %> from './<%= component.relativePath %>
 export const modules = {<% props.components.forEach(function(component){ %>
   <%= component.componentName %>,<% }); %>
 };
+
+export const markdowns = {<% props.components.forEach(function(component){ %>
+  <%= component.componentName %>: '<%= component.markdownPath %>',<% }); %>
+};
