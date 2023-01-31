@@ -101,12 +101,21 @@ function projectUsingYarn() {
   return files.length > 0;
 }
 
-function getKeys() {
+function getKeys(params) {
   return {
-    appId: process.env.THON_LABS_APP_ID,
-    clientId: process.env.THON_LABS_CLIENT_ID,
-    secretKey: process.env.THON_LABS_SECRET_KEY,
+    appId: params.appId || process.env.THON_LABS_APP_ID,
+    clientId: params.clientId || process.env.THON_LABS_CLIENT_ID,
+    secretKey: params.secretKey || process.env.THON_LABS_SECRET_KEY,
   };
+}
+
+function checkKeysExistence(params, toolbox) {
+  const { appId, clientId, secretKey } = getKeys(params);
+
+  if (toolbox && (!appId || !clientId || !secretKey)) {
+    toolbox.print.error('ERROR: Missing access configuration keys.');
+    process.exit();
+  }
 }
 
 const ConfigurationService = {
@@ -118,6 +127,7 @@ const ConfigurationService = {
   projectUsingNext,
   projectUsingYarn,
   getKeys,
+  checkKeysExistence,
 };
 
 export default ConfigurationService;

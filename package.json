@@ -43,7 +43,8 @@
     "fs-extra": "^11.1.0",
     "glob": "^8.0.3",
     "gluegun": "latest",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "node-tar.gz": "^1.0.0"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",

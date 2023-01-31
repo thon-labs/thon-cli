@@ -1,9 +1,8 @@
 import { GluegunToolbox } from 'gluegun';
 import ConfigurationService from '../services/configuration-service';
 import glob from 'glob';
-import fs from 'fs-extra';
 import ApiService from '../services/api-service';
-import { zipDir } from '../helpers/zip-dir';
+import * as fs from 'fs';
 
 module.exports = {
   name: 'deploy',
@@ -12,6 +11,13 @@ module.exports = {
   run: async (toolbox: GluegunToolbox) => {
     toolbox.info();
 
+    let params = toolbox.parameters.options as {
+      appId: string;
+      secretKey: string;
+      clientId: string;
+    };
+
+    ConfigurationService.checkKeysExistence(params, toolbox);
     ConfigurationService.checkSourceExistence(toolbox);
     ConfigurationService.checkExtensionsExistence(toolbox);
 
@@ -28,49 +34,66 @@ module.exports = {
       process.exit();
     }
 
-    const spinner = toolbox.print.spin('Deploying the markdown files...');
-    await toolbox.system.run('sleep 1');
+    const spinner = toolbox.print.spin(
+      'Creating document sources and groups from ".thon" data...',
+    );
 
     const fullSrcDir = ConfigurationService.getFullSourceDir();
 
-    const globPattern = `${fullSrcDir}/**/*.${
+    const componentsGlobPattern = `${fullSrcDir}/**/*.${
       extensions.length > 1 ? `+(${extensions.join('|')})` : extensions[0]
     }.{js,ts,jsx,tsx}`;
-    let files = glob.sync(globPattern);
+    const markdownsGlobPattern = `${fullSrcDir}/**/*.md`;
+    let files = [
+      ...glob.sync(componentsGlobPattern),
+      ...glob.sync(markdownsGlobPattern),
+    ];
 
     if (files.length === 0) {
       spinner.warn('\nNo file has been found. Deploy aborted.');
       process.exit();
     }
 
-    const { id: releaseId, number } = await ApiService.createRelease();
-    const sourcePath = process.cwd();
+    let payload = [];
+    createDocumentSourcesPayload({ payload, fullSrcDir, toolbox });
 
-    const folderName = `${sourcePath}/.TL-deploy_${number}_${releaseId}`;
+    await ApiService.createDocumentSourcesAndGroups(payload, params);
 
-    fs.mkdirSync(folderName);
-
-    // Move .thon to deploy folder
-    fs.copySync(fullSrcDir, `${folderName}/${sourceDir}`);
-
-    // Move components to deploy folder
-    componentsFolders.forEach((componentFolder) => {
-      fs.copySync(
-        `${sourcePath}/${componentFolder}`,
-        `${folderName}/${componentFolder}`,
-      );
-    });
-
-    const zipName = `${folderName.replace('.TL-deploy', 'TL-deploy')}.zip`;
-
-    await zipDir(folderName, zipName);
-
-    fs.rmSync(folderName, { recursive: true, force: true });
-
-    spinner.succeed(
-      `Successfully deployed - Document Release Number: ${number}`,
-    );
+    spinner.succeed(`Successfully deployed`);
 
     process.exit();
   },
 };
+
+function createDocumentSourcesPayload({ payload, fullSrcDir, toolbox }): any {
+  let dirItems = fs
+    .readdirSync(fullSrcDir)
+    .filter((item) => item !== 'index.js');
+
+  let files = [];
+  dirItems.forEach((item) => {
+    const isFolder = fs.lstatSync(`${fullSrcDir}/${item}`).isDirectory();
+
+    if (isFolder) {
+      files = createDocumentSourcesPayload({
+        payload,
+        fullSrcDir: `${fullSrcDir}/${item}`,
+        toolbox,
+      });
+    }
+
+    if (isFolder) {
+      payload.push({
+        title: item,
+        files,
+      });
+    } else if (item.endsWith('.md')) {
+      // console.log(files, item);
+      files.push({
+        title: item.replace('.md', ''),
+      });
+    }
+  });
+
+  return files;
+}
