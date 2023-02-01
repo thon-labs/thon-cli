@@ -3,11 +3,11 @@ import ConfigurationService from '../services/configuration-service';
 import glob from 'glob';
 import ApiService from '../services/api-service';
 import * as fs from 'fs';
+import frontMatter from 'front-matter';
 
 module.exports = {
   name: 'deploy',
-  description: 'Create a new release and deploy the documentation',
-  alias: ['d'],
+  description: 'Deploy all the document sources and groups from .thon folder',
   run: async (toolbox: GluegunToolbox) => {
     toolbox.info();
 
@@ -57,7 +57,12 @@ module.exports = {
     let payload = [];
     createDocumentSourcesPayload({ payload, fullSrcDir, toolbox });
 
-    await ApiService.createDocumentSourcesAndGroups(payload, params);
+    try {
+      await ApiService.createDocumentSourcesAndGroups(payload, params);
+    } catch (e) {
+      toolbox.print.error(`\n\nERROR: ${e.response.data.error}`);
+      process.exit();
+    }
 
     spinner.succeed(`Successfully deployed`);
 
@@ -68,7 +73,7 @@ module.exports = {
 function createDocumentSourcesPayload({ payload, fullSrcDir, toolbox }): any {
   let dirItems = fs
     .readdirSync(fullSrcDir)
-    .filter((item) => item !== 'index.js');
+    .filter((item) => item !== 'index.js' && item !== '__metadata__');
 
   let files = [];
   dirItems.forEach((item) => {
@@ -83,17 +88,61 @@ function createDocumentSourcesPayload({ payload, fullSrcDir, toolbox }): any {
     }
 
     if (isFolder) {
+      const metadata = getMetadata({
+        fileName: `${fullSrcDir}/${item}/__metadata__`,
+        toolbox,
+      });
+
       payload.push({
-        title: item,
+        title: metadata?.title ? metadata.title : item,
+        slug: metadata?.slug ? metadata.slug : item,
         files,
       });
     } else if (item.endsWith('.md')) {
-      // console.log(files, item);
+      const metadata = getMetadata({
+        fileName: `${fullSrcDir}/${item}`,
+        toolbox,
+      });
+
       files.push({
-        title: item.replace('.md', ''),
+        title: metadata?.title ? metadata.title : item.replace('.md', ''),
+        slug: metadata?.slug ? metadata.slug : item.replace('.md', ''),
       });
     }
   });
 
   return files;
+}
+
+function getMetadata({ fileName, toolbox }) {
+  try {
+    const { attributes } = frontMatter<{
+      title: string;
+      slug: string;
+    }>(
+      fs.readFileSync(fileName, {
+        encoding: 'utf-8',
+      }),
+    );
+    const hasAttributes = Object.keys(attributes).length > 0;
+    const allowedKeys = ['title', 'slug'];
+    const hasWrongKeys = Object.keys(attributes).some(
+      (key) => !allowedKeys.includes(key),
+    );
+
+    if (hasAttributes && hasWrongKeys) {
+      toolbox.print.error(
+        `\n\nERROR: Wrong metadata on "${fileName}". Allowed properties are: ${allowedKeys.join(
+          ', ',
+        )}`,
+      );
+      process.exit();
+    }
+
+    return hasAttributes ? attributes : null;
+  } catch {
+    // Ignore error and use title from above
+  }
+
+  return null;
 }
