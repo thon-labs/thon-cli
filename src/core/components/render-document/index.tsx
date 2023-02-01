@@ -1,5 +1,6 @@
 import React from 'react';
 import { marked } from '../../services/marked';
+import frontMatter from 'front-matter';
 
 type DocumentPiece = {
   type: 'react' | 'html' | 'markdown';
@@ -37,6 +38,10 @@ const RenderDocument: RenderDocumentType = ({
         );
       }
 
+      // Remove metadata
+      rawMarkdown = frontMatter(rawMarkdown).body;
+
+      // Locate thon blocks
       const componentsCount = rawMarkdown.match(/```thon/g)?.length || 0;
       const componentKey = '```thon';
 
