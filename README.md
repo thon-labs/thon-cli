@@ -1,4 +1,4 @@
-![Thon Docs Cover](https://static.thonlabs.io/images/readme-static/thon-docs-banner.png)
+# Thon CLI
 
 <div align="center">
 <a href="https://discord.gg/K4b5Nd2yBW">Join our Discord</a>

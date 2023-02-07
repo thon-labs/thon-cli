@@ -1,7 +1,7 @@
 {
   "name": "@thon/cli",
   "version": "0.1.0",
-  "description": "Document your React components easily using markdown.",
+  "description": "The SaaS for your SaaS",
   "repository": {
     "type": "github",
     "url": "https://github.com/thon-labs/thon-cli"
