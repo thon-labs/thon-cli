@@ -1,9 +1,13 @@
-import Button from '../../components/button';
+// Update according your components
 
-export const Primary = () => <Button>My Primary Button</Button>;
+import { Button } from '@thonlabs/ui/components/button';
+
+export const Primary = () => (
+  <Button variant="primary">My Primary Button</Button>
+);
 
 export const Secondary = () => (
-  <Button onClick={() => console.log('You can add events!')}>
+  <Button variant="primary" onClick={() => console.log('You can add events!')}>
     My Secondary Button
   </Button>
 );

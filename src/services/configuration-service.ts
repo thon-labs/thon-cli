@@ -6,7 +6,6 @@ export type ConfigurationFile = {
   sourceDir: string;
   extensions: string[];
   useTypescript: boolean;
-  componentsFolders: string[];
 };
 
 const ALLOWED_FILES = ['.thonrc', 'thonrc.json', 'thon.config.js'];
@@ -15,7 +14,6 @@ const defaultConfiguration: ConfigurationFile = {
   sourceDir: './thon',
   extensions: ['thon'],
   useTypescript: false,
-  componentsFolders: [],
 };
 
 function getConfiguration(): ConfigurationFile {
@@ -48,7 +46,7 @@ function checkSourceExistence(toolbox: GluegunToolbox): void {
 
   if (!sourcePathExists) {
     toolbox.print.error(
-      '\n\nERROR: The source directory was not found. Check the "sourceDir" on configuration file.',
+      '\nERROR: The source directory was not found. Check the "sourceDir" on configuration file.',
     );
     process.exit();
   }
@@ -59,7 +57,7 @@ function checkExtensionsExistence(toolbox: GluegunToolbox): void {
 
   if (!config.extensions || config.extensions?.length === 0) {
     toolbox.print.error(
-      '\n\nERROR: You must set extensions for build files. Check the "extensions" on configuration file.',
+      '\nERROR: You must set extensions for build files. Check the "extensions" on configuration file.',
     );
     process.exit();
   }

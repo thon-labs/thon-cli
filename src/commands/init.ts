@@ -84,13 +84,17 @@ module.exports = {
 
     await toolbox.template.generate({
       template: 'init-react-markdown.ejs',
-      target: `${config.sourceDir}/button/button.md`,
+      target: `${config.sourceDir}/components/button.md`,
     });
     await toolbox.template.generate({
       template: 'init-react-modules.ejs',
-      target: `${config.sourceDir}/button/button.${config.extensions[0]}.${
+      target: `${config.sourceDir}/components/button.${config.extensions[0]}.${
         config.useTypescript ? 'tsx' : 'jsx'
       }`,
+    });
+    await toolbox.template.generate({
+      template: 'init-react-components-metadata.ejs',
+      target: `${config.sourceDir}/components/__metadata__.md`,
     });
 
     console.log('');
@@ -115,11 +119,11 @@ module.exports = {
       console.log('');
       console.log(
         boxen(
-          `const { withThon } = require('thon/build/next');
+          `const { withThonDocs } = require('@thonlabs/docs/plugins/next');
 
 const nextConfig = { ... };
 
-module.exports = withThon(nextConfig);`,
+module.exports = withThonDocs(nextConfig);`,
           {
             title: 'next.config.js',
             padding: 1,

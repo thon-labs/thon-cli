@@ -4,6 +4,8 @@ import ConfigurationService from '../services/configuration-service';
 import upperFirst from 'lodash/upperFirst';
 import camelCase from 'lodash/camelCase';
 import trim from 'lodash/trim';
+import frontMatter from 'front-matter';
+import * as fs from 'fs';
 
 const pipe =
   (...fns) =>
@@ -71,14 +73,99 @@ module.exports = (toolbox: GluegunToolbox) => {
       };
     });
 
+    let structure = [];
+    createThonDocsMetadata({ structure, fullSrcDir, toolbox });
+
+    console.log(JSON.stringify(structure, null, 2));
+
     await toolbox.template.generate({
       template: `build-react-modules-export.ejs`,
       target: `${fullSrcDir}/index.${useTypescript ? 'ts' : 'js'}`,
       props: {
         components,
+        structure,
       },
     });
 
     spinner.succeed('Successfully builded');
   };
 };
+
+function createThonDocsMetadata({ structure, fullSrcDir, toolbox }): any {
+  let dirItems = fs
+    .readdirSync(fullSrcDir)
+    .filter((item) => item !== 'index.js' && item !== '__metadata__');
+
+  let files = [];
+  dirItems.forEach((item) => {
+    const isFolder = fs.lstatSync(`${fullSrcDir}/${item}`).isDirectory();
+
+    if (isFolder) {
+      files = createThonDocsMetadata({
+        structure,
+        fullSrcDir: `${fullSrcDir}/${item}`,
+        toolbox,
+      });
+    }
+
+    if (isFolder) {
+      const metadata = getMetadata({
+        fileName: `${fullSrcDir}/${item}/__metadata__`,
+        toolbox,
+      });
+
+      structure.push({
+        ...metadata,
+        title: metadata?.title ? metadata.title : item,
+        slug: metadata?.slug ? metadata.slug : item,
+        files,
+      });
+    } else if (item.endsWith('.md')) {
+      const metadata = getMetadata({
+        fileName: `${fullSrcDir}/${item}`,
+        toolbox,
+      });
+
+      files.push({
+        ...metadata,
+        title: metadata?.title ? metadata.title : item.replace('.md', ''),
+        slug: metadata?.slug ? metadata.slug : item.replace('.md', ''),
+      });
+    }
+  });
+
+  return files;
+}
+
+function getMetadata({ fileName, toolbox }) {
+  try {
+    const { attributes } = frontMatter<{
+      title: string;
+      slug: string;
+    }>(
+      fs.readFileSync(fileName, {
+        encoding: 'utf-8',
+      }),
+    );
+    const hasAttributes = Object.keys(attributes).length > 0;
+    const allowedKeys = ['title', 'slug', 'description', 'keywords', 'ogImage'];
+    const hasWrongKeys = Object.keys(attributes).some(
+      (key) => !allowedKeys.includes(key),
+    );
+
+    if (hasAttributes && hasWrongKeys) {
+      toolbox.print.error(
+        `\n\nERROR: Wrong metadata on "${fileName}". Allowed properties are: ${allowedKeys.join(
+          ', ',
+        )}`,
+      );
+      process.exit();
+    }
+
+    return hasAttributes ? attributes : null;
+  } catch {
+    // Ignore error and use title from above
+  }
+
+  return null;
+}

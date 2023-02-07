@@ -1,11 +1,10 @@
 /**
- * THON DOCUMENTATIONS
- * by @guscsales
+ * THON DOCS
  *
  * ATTENTION:
  * This module file is generated automatically, do not change it.
  *
- * To update it runs on terminal:
+ * To update it according your new files runs on terminal:
  *   $ thon build
  */
 <% props.components.forEach(function(component){ %>
@@ -15,6 +14,8 @@ export const modules = {<% props.components.forEach(function(component){ %>
   <%= component.componentName %>,<% }); %>
 };
 
-export const markdowns = {<% props.components.forEach(function(component){ %>
-  <%= component.componentName %>: '<%= component.markdownPath %>',<% }); %>
+export const docs = {<% props.components.forEach(function(component){ %>
+  <%= component.componentName %>: require('./<%= component.markdownPath %>'),<% }); %>
 };
+
+export const structure = <%- JSON.stringify(props.structure, null, 2) %>;
