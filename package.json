@@ -1,5 +1,5 @@
 {
-  "name": "@thon/cli",
+  "name": "thon",
   "version": "0.1.0",
   "description": "The SaaS for your SaaS",
   "repository": {
