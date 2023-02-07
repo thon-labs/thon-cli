@@ -1,10 +1,10 @@
 {
-  "name": "thon-cli",
+  "name": "@thon/cli",
   "version": "0.1.0",
   "description": "Document your React components easily using markdown.",
   "repository": {
     "type": "github",
-    "url": "https://github.com/guscsales/thon"
+    "url": "https://github.com/thon-labs/thon-cli"
   },
   "main": "build/index.js",
   "types": "build/types/index.d.ts",
