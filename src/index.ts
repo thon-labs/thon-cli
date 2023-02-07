@@ -1,10 +1,5 @@
 /**
- * Thon - document your react components easily
- * Copyright (c) 2022, Gustavo Sales. (MIT Licensed)
- * https://github.com/guscsales/thon
+ * Thon CLI - The SaaS for your SaaS
+ * Copyright (c) 2023, Thon Labs. (MIT Licensed)
+ * https://github.com/thon-labs/thon-cli
  */
-
-import ThonProvider from './core/providers/thon-provider';
-import useThon from './core/hooks/use-thon';
-
-export { ThonProvider, useThon };
