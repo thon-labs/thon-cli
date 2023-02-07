@@ -1,6 +1,6 @@
 {
   "name": "thon-cli",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Document your React components easily using markdown.",
   "repository": {
     "type": "github",
