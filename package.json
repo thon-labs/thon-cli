@@ -1,5 +1,5 @@
 {
-  "name": "thon",
+  "name": "thon-cli",
   "version": "0.0.2",
   "description": "Document your React components easily using markdown.",
   "repository": {
