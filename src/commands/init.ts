@@ -94,7 +94,7 @@ module.exports = {
     });
     await toolbox.template.generate({
       template: 'init-react-components-metadata.ejs',
-      target: `${config.sourceDir}/components/__metadata__.md`,
+      target: `${config.sourceDir}/components/__metadata__`,
     });
 
     console.log('');
