@@ -50,7 +50,7 @@ module.exports = (toolbox: GluegunToolbox) => {
     const components = files.map((file) => {
       // Replace cases like "./src/.thon-docs" -> "/src/.thon-docs"
       // since the full path not has the relative path
-      const normalizedSourceDir = sourceDir.replace('./', '/');
+      const normalizedSourceDir = sourceDir.replace('./', '');
       const splitPath = file.split(`/${normalizedSourceDir}/`);
       const folderAndFile = splitPath[splitPath.length - 1];
       const [relativePath] = folderAndFile.split(useTypescript ? '.ts' : '.js');
