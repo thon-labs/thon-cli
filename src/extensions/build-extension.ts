@@ -57,14 +57,13 @@ module.exports = (toolbox: GluegunToolbox) => {
       const relativePathSplit = folderAndFile.split('/');
       const fileName = relativePathSplit[relativePathSplit.length - 1];
       let componentName = null;
-      let markdownPath = null;
 
       for (let i = 0; i < extensions.length; i++) {
         const fileNameSplit = fileName.split(`.${extensions[i]}.`);
 
         if (fileNameSplit.length > 1) {
           componentName = pipe(camelCase, upperFirst, trim)(fileNameSplit[0]);
-          markdownPath = relativePath.replace(`.${extensions[i]}`, '.md');
+
           break;
         }
       }
@@ -72,7 +71,43 @@ module.exports = (toolbox: GluegunToolbox) => {
       return {
         componentName,
         relativePath,
-        markdownPath,
+      };
+    });
+
+    const markdownsGlobPattern = `${fullSrcDir}/**/*.md`;
+    let markdownsFiles = glob.sync(markdownsGlobPattern);
+
+    if (markdownsFiles.length === 0) {
+      spinner.warn(
+        `\nNo markdown has been found. Did you files on the Thon Docs folder?`,
+      );
+      process.exit();
+    }
+
+    spinner.clear();
+
+    toolbox.print.info(
+      `\nFound ${files.length} markdown${files.length > 1 ? 's' : ''}\n`,
+    );
+
+    const markdowns = markdownsFiles.map((file) => {
+      // Replace cases like "./src/.thon-docs" -> "/src/.thon-docs"
+      // since the full path not has the relative path
+      const normalizedSourceDir = sourceDir.replace('./', '');
+      const splitPath = file.split(`/${normalizedSourceDir}/`);
+      const folderAndFile = splitPath[splitPath.length - 1];
+      const [relativePath] = folderAndFile.split('.md');
+      const relativePathSplit = folderAndFile.split('/');
+      const fileName = relativePathSplit[relativePathSplit.length - 1];
+      const { slug: metadataSlug } = getMetadata({
+        fileName: `${normalizedSourceDir}/${relativePath}.md`,
+        toolbox,
+      });
+      let slug = metadataSlug || fileName.replace('.md', '');
+
+      return {
+        path: folderAndFile,
+        slug,
       };
     });
 
@@ -84,6 +119,7 @@ module.exports = (toolbox: GluegunToolbox) => {
       target: `${fullSrcDir}/index.${useTypescript ? 'ts' : 'js'}`,
       props: {
         components,
+        markdowns,
         structure,
       },
     });

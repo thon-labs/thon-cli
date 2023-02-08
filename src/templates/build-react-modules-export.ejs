@@ -14,8 +14,8 @@ export const modules = {<% props.components.forEach(function(component){ %>
   <%= component.componentName %>,<% }); %>
 };
 
-export const markdowns = {<% props.components.forEach(function(component){ %>
-  <%= component.componentName %>: require('./<%= component.markdownPath %>'),<% }); %>
+export const markdowns = {<% props.markdowns.forEach(function(markdown){ %>
+  '<%= markdown.slug %>': require('./<%= markdown.path %>'),<% }); %>
 };
 
 export const structure = <%- JSON.stringify(props.structure, null, 2) %>;
