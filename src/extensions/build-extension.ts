@@ -79,8 +79,6 @@ module.exports = (toolbox: GluegunToolbox) => {
     let structure = [];
     createThonDocsMetadata({ structure, fullSrcDir, toolbox });
 
-    console.log(JSON.stringify(structure, null, 2));
-
     await toolbox.template.generate({
       template: `build-react-modules-export.ejs`,
       target: `${fullSrcDir}/index.${useTypescript ? 'ts' : 'js'}`,
