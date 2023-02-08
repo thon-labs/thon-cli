@@ -8,10 +8,10 @@ export type ConfigurationFile = {
   useTypescript: boolean;
 };
 
-const ALLOWED_FILES = ['.thonrc', 'thonrc.json', 'thon.config.js'];
+const ALLOWED_FILES = ['.thondocsrc', 'thon-docs.json'];
 
 const defaultConfiguration: ConfigurationFile = {
-  sourceDir: './thon',
+  sourceDir: './thon-docs',
   extensions: ['thon'],
   useTypescript: false,
 };

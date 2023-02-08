@@ -20,7 +20,6 @@
 
 - init
 - build
-- deploy
 
 More information on Thon Docs [documentation](https://www.npmjs.com/package/@thonlabs/docs)
 

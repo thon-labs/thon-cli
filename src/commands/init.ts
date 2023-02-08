@@ -72,9 +72,9 @@ module.exports = {
 
     await toolbox.template.generate({
       template: 'core-thonrc.ejs',
-      target: `.thonrc`,
+      target: `thon-docs.json`,
       props: {
-        sourceDir: `${root != '' ? `${root}/` : ''}.thon`,
+        sourceDir: `${root != '' ? `${root}/` : ''}.thon-docs`,
         useTypescript,
       },
     });

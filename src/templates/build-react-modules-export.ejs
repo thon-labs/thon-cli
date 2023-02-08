@@ -14,8 +14,16 @@ export const modules = {<% props.components.forEach(function(component){ %>
   <%= component.componentName %>,<% }); %>
 };
 
-export const docs = {<% props.components.forEach(function(component){ %>
+export const markdowns = {<% props.components.forEach(function(component){ %>
   <%= component.componentName %>: require('./<%= component.markdownPath %>'),<% }); %>
 };
 
 export const structure = <%- JSON.stringify(props.structure, null, 2) %>;
+
+const ThonDocs = {
+  modules,
+  markdowns,
+  structure,
+}
+
+export default ThonDocs;
