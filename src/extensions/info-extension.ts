@@ -4,6 +4,6 @@ const { version } = require('../../package.json');
 
 module.exports = (toolbox: GluegunToolbox) => {
   toolbox.info = async () => {
-    toolbox.print.highlight(`Thon CLI (v${version})\n`);
+    toolbox.print.highlight(`Thon CLI (v${version})`);
   };
 };
