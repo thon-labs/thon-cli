@@ -16,7 +16,11 @@ const defaultConfiguration: ConfigurationFile = {
   useTypescript: false,
 };
 
-function getConfiguration(): ConfigurationFile {
+export type Configuration = ConfigurationFile & {
+  fullSourceDir: string;
+};
+
+function getConfiguration(): Configuration {
   let configFile = {} as ConfigurationFile;
   const sourcePath = process.cwd();
 
@@ -36,7 +40,15 @@ function getConfiguration(): ConfigurationFile {
     throw new Error('Configuration file not found.');
   }
 
-  return { ...defaultConfiguration, ...configFile };
+  const configs = {
+    ...defaultConfiguration,
+    ...configFile,
+  };
+
+  return {
+    ...configs,
+    fullSourceDir: `${process.cwd()}/${configs.sourceDir}`,
+  };
 }
 
 function checkSourceExistence(toolbox: GluegunToolbox): void {

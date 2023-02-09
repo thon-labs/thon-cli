@@ -1,4 +1,10 @@
 import { GluegunToolbox } from 'gluegun';
+import chokidar from 'chokidar';
+import ConfigurationService from '../services/configuration-service';
+
+type Params = {
+  watch: boolean;
+};
 
 module.exports = {
   name: 'build',
@@ -7,8 +13,26 @@ module.exports = {
   run: async (toolbox: GluegunToolbox) => {
     toolbox.info();
 
-    await toolbox.build();
+    let { watch } = toolbox.parameters.options as Params;
 
-    process.exit();
+    if (watch) {
+      const { fullSourceDir } = ConfigurationService.getConfiguration();
+
+      await toolbox.build();
+      toolbox.print.info('\nWaiting for changes...');
+
+      chokidar
+        .watch(fullSourceDir, {
+          ignored: /^.*\.[tj]s?$/,
+          ignoreInitial: true,
+        })
+        .on('all', async () => {
+          await toolbox.build();
+          toolbox.print.info('\nWaiting for changes...');
+        });
+    } else {
+      await toolbox.build();
+      process.exit();
+    }
   },
 };

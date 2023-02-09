@@ -15,7 +15,6 @@ const pipe =
 module.exports = (toolbox: GluegunToolbox) => {
   toolbox.build = async () => {
     const spinner = toolbox.print.spin('Building...');
-    await toolbox.system.run('sleep 1');
 
     ConfigurationService.checkSourceExistence(toolbox);
     ConfigurationService.checkExtensionsExistence(toolbox);
@@ -42,10 +41,8 @@ module.exports = (toolbox: GluegunToolbox) => {
     toolbox.print.info(
       `\nFound ${files.length} file${
         files.length > 1 ? 's' : ''
-      } with allowed extensions: ${extensions.join(', ')}\n`,
+      } with allowed extensions: ${extensions.join(', ')}`,
     );
-
-    await toolbox.system.run('sleep 1');
 
     const components = files.map((file) => {
       // Replace cases like "./src/.thon-docs" -> "/src/.thon-docs"
@@ -87,7 +84,9 @@ module.exports = (toolbox: GluegunToolbox) => {
     spinner.clear();
 
     toolbox.print.info(
-      `\nFound ${files.length} markdown${files.length > 1 ? 's' : ''}\n`,
+      `Found ${markdownsFiles.length} markdown${
+        markdownsFiles.length > 1 ? 's' : ''
+      }`,
     );
 
     const markdowns = markdownsFiles.map((file) => {
@@ -114,6 +113,8 @@ module.exports = (toolbox: GluegunToolbox) => {
     let structure = [];
     createThonDocsMetadata({ structure, fullSrcDir, toolbox });
 
+    spinner.start();
+
     await toolbox.template.generate({
       template: `build-react-modules-export.ejs`,
       target: `${fullSrcDir}/index.${useTypescript ? 'ts' : 'js'}`,
@@ -124,6 +125,7 @@ module.exports = (toolbox: GluegunToolbox) => {
       },
     });
 
+    console.log('');
     spinner.succeed('Successfully builded');
   };
 };
@@ -192,7 +194,7 @@ function getMetadata({ fileName, toolbox }) {
 
     if (hasAttributes && hasWrongKeys) {
       toolbox.print.error(
-        `\n\nERROR: Wrong metadata on "${fileName}". Allowed properties are: ${allowedKeys.join(
+        `\nERROR: Wrong metadata on "${fileName}". Allowed properties are: ${allowedKeys.join(
           ', ',
         )}`,
       );
