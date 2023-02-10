@@ -135,12 +135,12 @@ function createThonDocsMetadata({ structure, fullSrcDir, toolbox }): any {
     .readdirSync(fullSrcDir)
     .filter((item) => item !== 'index.js' && item !== '__metadata__');
 
-  let files = [];
+  let items = [];
   dirItems.forEach((item) => {
     const isFolder = fs.lstatSync(`${fullSrcDir}/${item}`).isDirectory();
 
     if (isFolder) {
-      files = createThonDocsMetadata({
+      items = createThonDocsMetadata({
         structure,
         fullSrcDir: `${fullSrcDir}/${item}`,
         toolbox,
@@ -157,7 +157,7 @@ function createThonDocsMetadata({ structure, fullSrcDir, toolbox }): any {
         ...metadata,
         title: metadata?.title ? metadata.title : item,
         slug: metadata?.slug ? metadata.slug : item,
-        files,
+        items,
       });
     } else if (item.endsWith('.md')) {
       const metadata = getMetadata({
@@ -165,7 +165,7 @@ function createThonDocsMetadata({ structure, fullSrcDir, toolbox }): any {
         toolbox,
       });
 
-      files.push({
+      items.push({
         ...metadata,
         title: metadata?.title ? metadata.title : item.replace('.md', ''),
         slug: metadata?.slug ? metadata.slug : item.replace('.md', ''),
@@ -173,7 +173,7 @@ function createThonDocsMetadata({ structure, fullSrcDir, toolbox }): any {
     }
   });
 
-  return files;
+  return items;
 }
 
 function getMetadata({ fileName, toolbox }) {
